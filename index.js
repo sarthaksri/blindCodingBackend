@@ -52,7 +52,7 @@ app.get('/addQuestion',async (req,res) => {
         res.status(500).json({ error: error.message });
     }
 })
-app.post('/submit_question', async (req, res) => {
+app.post('/runCode', async (req, res) => {
     try {
         const data = req.body;
         const user = req.user;
@@ -66,7 +66,6 @@ app.post('/submit_question', async (req, res) => {
 
         const result = await submitCode(source_code, input_data, language_id);
 
-
         const response_data = {
             output: result,
             timestamp: log_entry.timestamp
@@ -79,7 +78,7 @@ app.post('/submit_question', async (req, res) => {
     }
 });
 
-app.post('/runCode', async (req, res) => {
+app.post('/submitQuestion', async (req, res) => {
     try {
         const postData = req.body;
         const que = await Question.findOne({ qno: postData.qno });
