@@ -116,7 +116,7 @@ app.post('/runCode', async (req, res) => {
         const user = req.user;
 
         const question = await Question.findOne({ qno: data.qNo });
-        let input_data = "";
+        const input_data = question.samplein;
 
         const source_code = data.source_code;
         const language_id = data.language;
@@ -177,8 +177,7 @@ async function submitCode(source_code, input_data, language_id) {
     
 
     const headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
+        "Content-Type": "application/json"
     };
 
     const submission_url = "http://localhost:2358/submissions";
@@ -188,7 +187,7 @@ async function submitCode(source_code, input_data, language_id) {
         language_id: language_id,
     };
 
-    const submission_response = await axios.post(submission_url, submission_payload, { headers });
+    const submission_response = await axios.post(submission_url, submission_payload,  {headers} );
     const submission_data = submission_response.data;
     const token = submission_data.token;
 
@@ -213,7 +212,9 @@ async function submitCode(source_code, input_data, language_id) {
         const output = base64.decode(output_data.stdout).toString("utf-8");
         const dat = `Results:\n${output}\nExecution Time: ${output_data.time} Secs\nMemory Used: ${output_data.memory} bytes`;
         console.log(dat);
-        return { output };
+        if(output_data.status.description === 'Accepted')
+            return { status:true };
+        return {status : false};
     } else if (output_data.stderr) {
         const error = base64.decode(output_data.stderr).toString("utf-8");
         return { output: `Error: ${error}` };
