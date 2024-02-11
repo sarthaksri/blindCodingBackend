@@ -126,7 +126,7 @@ async function submitCode(source_code, input_data, language_id) {
         "Accept": "application/json",
     };
 
-    const submission_url = " https://localhost:2358/submissions";
+    const submission_url = "https://104e-112-196-126-3.ngrok-free.app/submissions";
     const submission_payload = {
         source_code: source_code,
         stdin: input_data,
