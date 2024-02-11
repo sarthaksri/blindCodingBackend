@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const base64 = require('base-64');
 const { Userdata, Question, ActivityLog } = require('./models');
@@ -52,11 +53,67 @@ app.get('/addQuestion',async (req,res) => {
         res.status(500).json({ error: error.message });
     }
 })
+
+app.post('/signup', async (req,res)=>{
+    const {name,email,password} = req.body;
+    if(!name || !email || !password){
+        return res.status(422).json({error:"Please add all the fields"});
+    }
+    try{
+        const user = new Userdata({
+            name,
+            email,
+            password,
+            score:0
+        })
+       await user.save();
+       res.send({status:true, message:"Registration successful"});
+    }
+    catch(error){
+         console.log(error);
+        }
+    })
+
+app.post('/login', async (req,res)=>{
+    try {
+        const { email, password } = req.body;
+        const user = await Userdata.findOne({ email:email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (user.password !== password) {
+            return res.status(401).json({ message: 'Invalid password' });
+        }
+        // create token
+        const payload = {
+            email:email,
+            id:user._id,
+        }
+        const token = jwt.sign(payload,process.env.JWT_SECRET,{
+            expiresIn:"1d"
+        })
+        user.token = token;
+        const options = {
+            expires: new Date(Date.now()+3*24*60*60*1000),
+                httpOnly:true
+        }
+        res.cookie("token",token,options).status(200).json({
+            success:true,
+            message:"LOGGED IN SUCCESFULLY",
+                user,
+                payload
+        })
+        // password null
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 app.post('/runCode', async (req, res) => {
     try {
         const data = req.body;
         const user = req.user;
-        console.log(`User ID: ${user.id}`);
 
         const question = await Question.findOne({ qno: data.qNo });
         let input_data = "";
@@ -68,7 +125,6 @@ app.post('/runCode', async (req, res) => {
 
         const response_data = {
             output: result,
-            timestamp: log_entry.timestamp
         };
 
         res.json(response_data);
@@ -125,7 +181,7 @@ async function submitCode(source_code, input_data, language_id) {
         "Accept": "application/json",
     };
 
-    const submission_url = "https://104e-112-196-126-3.ngrok-free.app/submissions";
+    const submission_url = "http://localhost:2358/submissions";
     const submission_payload = {
         source_code: source_code,
         stdin: input_data,

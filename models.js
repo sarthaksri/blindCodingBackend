@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 // Define Userdata Schema
 const UserdataSchema = new mongoose.Schema({
-    user_id: { type: String, required: true }, // Assuming user_id is a string
     score: { type: Number, default: 0 },
-    answerGiven: { type: String, default: '0' } // Assuming NUMBER_OF_QUESTIONS is predefined
+    password : {type : String, required : true},
+    name : {type : String, required : true},
+    email : {type : String, required : true, unique:true}
 });
 
 // Define Question Schema
