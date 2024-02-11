@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const axios = require('axios');
 const base64 = require('base-64');
 const { Userdata, Question, ActivityLog } = require('./models');
@@ -10,6 +11,24 @@ const connectToMongo = require('./db');
 const bodyParser = require('body-parser');
 connectToMongo();
 const port = process.env.port||4000;
+
+app.get("/",(req,res)=>{
+    return res.json({
+        success:true,
+        message:"YOUR SERVER IS ACTIVATED"
+    })
+  })
+
+  app.use((_req,res,next)=>{
+    res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Headers', '*');
+      res.header('Access-Control-Allow-Methods', '*');
+    next();
+  })
+  app.use(cors({
+    origin:"*",
+    credentials:true
+  }))
 
 app.get('/addQuestion',async (req,res) => {
     try{
@@ -107,7 +126,7 @@ async function submitCode(source_code, input_data, language_id) {
         "Accept": "application/json",
     };
 
-    const submission_url = " https://8326-2a09-bac1-3680-5f70-00-1c5-66.ngrok-free.app/submissions";
+    const submission_url = " https://localhost:2358/submissions";
     const submission_payload = {
         source_code: source_code,
         stdin: input_data,
@@ -120,7 +139,7 @@ async function submitCode(source_code, input_data, language_id) {
 
     if (!token) {
         return { output: "Error creating submission." };
-    }
+    } 
 
     let status_description = "Queue";
     let output_data = {};
