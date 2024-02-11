@@ -115,7 +115,7 @@ app.post('/runCode', async (req, res) => {
         const data = req.body;
         const user = req.user;
 
-        const question = await Question.findOne({ qno: data.qNo });
+        const question = await Question.findOne({ qno: 1 });
         const input_data = question.samplein;
 
         const source_code = data.source_code;
