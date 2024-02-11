@@ -205,7 +205,6 @@ async function submitCode(source_code, input_data, language_id) {
         const output_response = await axios.get(`https:/abc3-112-196-126-3.ngrok-free.app/submissions/${token}?base64_encoded=true`, { headers });
         output_data = output_response.data;
         status_description = output_data.status?.description;
-        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     if (output_data.stdout) {
