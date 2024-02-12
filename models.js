@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 // Define Userdata Schema
 const UserdataSchema = new mongoose.Schema({
     score: { type: String, default: 0 },
-    password : {type : String, required : true},
     name : {type : String, required : true},
     email : {type : String, required : true, unique:true}
 });
