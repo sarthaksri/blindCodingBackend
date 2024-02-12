@@ -56,7 +56,6 @@ app.post('/signup', async (req,res)=>{
         const user = new Userdata({
             name,
             email,
-            password,
             score:0
         })
        await user.save();
@@ -67,41 +66,41 @@ app.post('/signup', async (req,res)=>{
         }
     })
 
-app.post('/login', async (req,res)=>{
-    try {
-        const { email, password } = req.body;
-        const user = await Userdata.findOne({ email:email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        if (user.password !== password) {
-            return res.status(401).json({ message: 'Invalid password' });
-        }
-        // create token
-        const payload = {
-            email:email,
-            id:user._id,
-        }
-        const token = jwt.sign(payload,process.env.JWT_SECRET,{
-            expiresIn:"1d"
-        })
-        user.token = token;
-        const options = {
-            expires: new Date(Date.now()+3*24*60*60*1000),
-                httpOnly:true
-        }
-        res.cookie("token",token,options).status(200).json({
-            success:true,
-            message:"LOGGED IN SUCCESFULLY",
-                user,
-                payload
-        })
-        // password null
+// app.post('/login', async (req,res)=>{
+//     try {
+//         const { email, password } = req.body;
+//         const user = await Userdata.findOne({ email:email });
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+//         if (user.password !== password) {
+//             return res.status(401).json({ message: 'Invalid password' });
+//         }
+//         // create token
+//         const payload = {
+//             email:email,
+//             id:user._id,
+//         }
+//         const token = jwt.sign(payload,process.env.JWT_SECRET,{
+//             expiresIn:"1d"
+//         })
+//         user.token = token;
+//         const options = {
+//             expires: new Date(Date.now()+3*24*60*60*1000),
+//                 httpOnly:true
+//         }
+//         res.cookie("token",token,options).status(200).json({
+//             success:true,
+//             message:"LOGGED IN SUCCESFULLY",
+//                 user,
+//                 payload
+//         })
+//         // password null
 
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
+//     } catch (error) {
+//         res.status(500).json({ message: 'Internal server error' });
+//     }
+// });
 
 app.post('/runCode', async (req, res) => {
     try {
@@ -114,7 +113,7 @@ app.post('/runCode', async (req, res) => {
 
         const question = await Question.findOne({ qno: data.qNo });
         const input_data = question.samplein;
-        
+
         const source_code = data.source_code;
         const language_id = data.language;
         const expected_output = question.sampleout;
@@ -129,7 +128,7 @@ app.post('/runCode', async (req, res) => {
             data.runCount = data.runCount - 4;
         else
             data.runCount = 0;
-        if(response_data.output.message === "Correct")
+        if(response_data.output.message === "Correct" && data.flag == false)
         {
             let currUser_score = parseInt(currUser.score);
             let data_score = parseInt(data.score);
