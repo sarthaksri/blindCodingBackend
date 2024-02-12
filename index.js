@@ -135,38 +135,38 @@ app.post('/runCode', async (req, res) => {
     }
 });
 
-app.post('/submitQuestion', async (req, res) => {
-    try {
-        const postData = req.body;
-        const que = await Question.findOne({ qno: postData.qno });
-        postData.stdin = `3\n${que.test_case1}\n${que.test_case2}\n${que.test_case3}`;
-        const language_id = postData.language;
-        const resp = await submitCode(postData.source_code, postData.stdin, language_id);
-        let result = {};
-        if (resp.output.toLowerCase().includes('error')) {
-            result.output = resp.output;
-        } else {
-            const answer = `${que.test_case1_sol}\n${que.test_case2_sol}\n${que.test_case3_sol}\n`;
-            const currUser = await Userdata.findOne({ user_id: req.user });
-            if (answer === resp.output) {
-                result.output = 'Correct Answer';
-                if (currUser.answerGiven[postData.qNo] === '0') {
-                    currUser.score += 10;
-                    await currUser.save();
-                }
-                currUser.answerGiven = currUser.answerGiven.substring(0, postData.qNo) + '1' + currUser.answerGiven.substring(postData.qNo + 1);
-            } else {
-                result.output = 'Wrong answer..';
-            }
-            await currUser.save();
-            result.score = currUser.score;
-        }
-        res.json(result);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
-});
+// app.post('/submitQuestion', async (req, res) => {
+//     try {
+//         const postData = req.body;
+//         const que = await Question.findOne({ qno: postData.qno });
+//         postData.stdin = `3\n${que.test_case1}\n${que.test_case2}\n${que.test_case3}`;
+//         const language_id = postData.language;
+//         const resp = await submitCode(postData.source_code, postData.stdin, language_id);
+//         let result = {};
+//         if (resp.output.toLowerCase().includes('error')) {
+//             result.output = resp.output;
+//         } else {
+//             const answer = `${que.test_case1_sol}\n${que.test_case2_sol}\n${que.test_case3_sol}\n`;
+//             const currUser = await Userdata.findOne({ user_id: req.user });
+//             if (answer === resp.output) {
+//                 result.output = 'Correct Answer';
+//                 if (currUser.answerGiven[postData.qNo] === '0') {
+//                     currUser.score += 10;
+//                     await currUser.save();
+//                 }
+//                 currUser.answerGiven = currUser.answerGiven.substring(0, postData.qNo) + '1' + currUser.answerGiven.substring(postData.qNo + 1);
+//             } else {
+//                 result.output = 'Wrong answer..';
+//             }
+//             await currUser.save();
+//             result.score = currUser.score;
+//         }
+//         res.json(result);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: error.message });
+//     }
+// });
 
 async function submitCode(source_code, input_data, language_id, expected_output) {
 
@@ -199,7 +199,7 @@ async function submitCode(source_code, input_data, language_id, expected_output)
 
     let status_description = "Queue";
     let output_data = {};
-    while (status_description !== "Accepted") {
+    while (status_description !== "Accepted" && status_description!=="Wrong Answer") {
         if (status_description.includes("Error")) {
             return { output: `Error: ${status_description}` };
         }
@@ -215,8 +215,8 @@ async function submitCode(source_code, input_data, language_id, expected_output)
         console.log(dat);
         if(output_data.status.description === 'Accepted')
             return {message:"Correct"};
-        else
-            return {message:"Inorrect"};
+        else if(output_data.status.description === 'Wrong Answer')
+            return {message:"Incorrect"};
     } else if (output_data.stderr) {
         const error = base64.decode(output_data.stderr).toString("utf-8");
         return { output: `Error: ${error}` };

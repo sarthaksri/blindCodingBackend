@@ -14,7 +14,7 @@ const QuestionSchema = new mongoose.Schema({
     text: { type: String, required: true },
     testcaseno: { type: Number, required: true },
     samplein: { type: String, required: true },
-    sampleout: { type: String, required: true },
+    sampleout: { type: String},
     test_case1: { type: String },
     test_case1_sol: { type: String },
     test_case2: { type: String },
