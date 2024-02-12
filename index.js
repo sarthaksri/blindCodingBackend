@@ -34,10 +34,10 @@ app.get("/",(req,res)=>{
 app.get('/addQuestion',async (req,res) => {
     try{
         const question = new Question({
-            qno: 4,
+            qno: 5,
             text:"Given an array ‘nums’, partition it in such a way such that, all even numbers are at the front, and all the odd numbers are at the back",
-            samplein: "[3,1,2,4]",
-            sampleout: "2\n4\n3\n1"
+            samplein: "Judge0",
+            sampleout: "Judge0"
         });
         await question.save();
         res.send("Question added successfully");
@@ -110,15 +110,13 @@ app.post('/runCode', async (req, res) => {
 
         const currUser = await Userdata.findOne({ user_id: user });
 
-        const question = await Question.findOne({ qno: 1 });
+        const question = await Question.findOne({ qno: data.qNo });
         const input_data = question.samplein;
 
         const source_code = data.source_code;
         const language_id = data.language;
         const expected_output = question.sampleout;
-
-        console.log(currUser);
-
+     
         const result = await submitCode(source_code, input_data, language_id, expected_output);
 
         const response_data = {
@@ -130,7 +128,16 @@ app.post('/runCode', async (req, res) => {
         else
             data.runCount = 0;
         if(response_data.output.message === "Correct")
-        currUser.score = currUser.score + data.score - data.runCount*5;
+        {
+            let currUser_score = parseInt(currUser.score);
+            let data_score = parseInt(data.score);
+            let data_runCount = parseInt(data.runCount);
+
+            let new_score = currUser_score + data_score - data_runCount * 5;
+
+            currUser.score = new_score.toString();
+            await currUser.save();
+        }
         res.json(response_data);
     } catch (error) {
         console.error(error);
