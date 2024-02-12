@@ -34,10 +34,10 @@ app.get("/",(req,res)=>{
 app.get('/addQuestion',async (req,res) => {
     try{
         const question = new Question({
-            qno: 2,
-            text:"Check if a Number is a Power of Two: Write a function that checks if a number is a power of two",
-            samplein: "2",
-            sampleout: "True"
+            qno: 4,
+            text:"Given an array ‘nums’, partition it in such a way such that, all even numbers are at the front, and all the odd numbers are at the back",
+            samplein: "[3,1,2,4]",
+            sampleout: "2\n4\n3\n1"
         });
         await question.save();
         res.send("Question added successfully");
@@ -108,6 +108,8 @@ app.post('/runCode', async (req, res) => {
         const data = req.body;
         const user = req.user;
 
+        const currUser = await Userdata.findOne({ user_id: user });
+
         const question = await Question.findOne({ qno: 1 });
         const input_data = question.samplein;
 
@@ -120,7 +122,8 @@ app.post('/runCode', async (req, res) => {
         const response_data = {
             output: result,
         };
-
+        if(response_data.output.message === "Correct")
+        currUser.score = currUser.score + data.score - data.runCount*5;
         res.json(response_data);
     } catch (error) {
         console.error(error);
