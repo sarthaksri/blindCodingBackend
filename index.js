@@ -117,6 +117,8 @@ app.post('/runCode', async (req, res) => {
         const language_id = data.language;
         const expected_output = question.sampleout;
 
+        console.log(currUser);
+
         const result = await submitCode(source_code, input_data, language_id, expected_output);
 
         const response_data = {
