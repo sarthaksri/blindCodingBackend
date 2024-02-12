@@ -10,7 +10,7 @@ const UserdataSchema = new mongoose.Schema({
 
 // Define Question Schema
 const QuestionSchema = new mongoose.Schema({
-    qno: { type: Number, required: true },
+    qno: { type: Number, required: true, unique : true },
     text: { type: String, required: true },
     testcaseno: { type: Number},
     samplein: { type: String, required: true },
