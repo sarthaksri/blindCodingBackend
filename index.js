@@ -113,6 +113,8 @@ app.post('/runCode', async (req, res) => {
         const question = await Question.findOne({ qno: data.qNo });
         const input_data = question.samplein;
 
+        console.log(data);
+
         const source_code = data.source_code;
         const language_id = data.language;
         const expected_output = question.sampleout;
