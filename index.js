@@ -48,8 +48,8 @@ app.get('/addQuestion',async (req,res) => {
 })
 
 app.post('/signup', async (req,res)=>{
-    const {name,email,password} = req.body;
-    if(!name || !email || !password){
+    const {name,email} = req.body;
+    if(!name || !email ){
         return res.status(422).json({error:"Please add all the fields"});
     }
     try{
