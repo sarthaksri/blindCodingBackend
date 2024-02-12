@@ -122,6 +122,11 @@ app.post('/runCode', async (req, res) => {
         const response_data = {
             output: result,
         };
+
+        if(data.runCount > 4)
+            data.runCount = data.runCount - 4;
+        else
+            data.runCount = 0;
         if(response_data.output.message === "Correct")
         currUser.score = currUser.score + data.score - data.runCount*5;
         res.json(response_data);
