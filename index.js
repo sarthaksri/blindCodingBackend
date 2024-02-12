@@ -120,8 +120,9 @@ app.post('/runCode', async (req, res) => {
 
         const source_code = data.source_code;
         const language_id = data.language;
+        const expected_output = question.sampleout;
 
-        const result = await submitCode(source_code, input_data, language_id);
+        const result = await submitCode(source_code, input_data, language_id, expected_output);
 
         const response_data = {
             output: result,
@@ -167,7 +168,7 @@ app.post('/submitQuestion', async (req, res) => {
     }
 });
 
-async function submitCode(source_code, input_data, language_id) {
+async function submitCode(source_code, input_data, language_id, expected_output) {
 
     // lang codes
     // 71 - Python
@@ -185,6 +186,7 @@ async function submitCode(source_code, input_data, language_id) {
         source_code: source_code,
         stdin: input_data,
         language_id: language_id,
+        expected_output : expected_output
     };
 
     const submission_response = await axios.post(submission_url, submission_payload,  {headers} );
@@ -212,8 +214,9 @@ async function submitCode(source_code, input_data, language_id) {
         const dat = `Results:\n${output}\nExecution Time: ${output_data.time} Secs\nMemory Used: ${output_data.memory} bytes`;
         console.log(dat);
         if(output_data.status.description === 'Accepted')
-            return { status:true };
-        return {status : false};
+            return {message:"Correct"};
+        else
+            return {message:"Inorrect"};
     } else if (output_data.stderr) {
         const error = base64.decode(output_data.stderr).toString("utf-8");
         return { output: `Error: ${error}` };
