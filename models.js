@@ -12,7 +12,7 @@ const UserdataSchema = new mongoose.Schema({
 const QuestionSchema = new mongoose.Schema({
     qno: { type: Number, required: true },
     text: { type: String, required: true },
-    testcaseno: { type: Number, required: true },
+    testcaseno: { type: Number},
     samplein: { type: String, required: true },
     sampleout: { type: String},
     test_case1: { type: String },

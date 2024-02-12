@@ -34,17 +34,10 @@ app.get("/",(req,res)=>{
 app.get('/addQuestion',async (req,res) => {
     try{
         const question = new Question({
-            qno: 1,
-            text: "Print Judge0",
-            testcaseno: 3,
-            samplein: "Judge0",
-            sampleout: "Judge0",
-            test_case1: "Judge0",
-            test_case1_sol: "Judge0",
-            test_case2: "Judge0",
-            test_case2_sol: "Judge0",
-            test_case3: "Judge0",
-            test_case3_sol: "Judge0"
+            qno: 2,
+            text:"Check if a Number is a Power of Two: Write a function that checks if a number is a power of two",
+            samplein: "2",
+            sampleout: "True"
         });
         await question.save();
         res.send("Question added successfully");
@@ -181,7 +174,7 @@ async function submitCode(source_code, input_data, language_id, expected_output)
         "Content-Type": "application/json"
     };
 
-    const submission_url = "https://9a8a-112-196-126-3.ngrok-free.app/submissions";
+    const submission_url = "https://1615-112-196-126-3.ngrok-free.app/submissions";
     const submission_payload = {
         source_code: source_code,
         stdin: input_data,
@@ -204,7 +197,7 @@ async function submitCode(source_code, input_data, language_id, expected_output)
             return { output: `Error: ${status_description}` };
         }
         console.log(`Checking Submission Status\nstatus: ${status_description}`);
-        const output_response = await axios.get(`https://9a8a-112-196-126-3.ngrok-free.app/submissions/${token}?base64_encoded=true`, { headers });
+        const output_response = await axios.get(`https://1615-112-196-126-3.ngrok-free.app/submissions/${token}?base64_encoded=true`, { headers });
         output_data = output_response.data;
         status_description = output_data.status?.description;
     }
