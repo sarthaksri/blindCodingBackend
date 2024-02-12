@@ -108,7 +108,9 @@ app.post('/runCode', async (req, res) => {
         const data = req.body;
         const user = req.user;
 
-        const currUser = await Userdata.findOne({ user_id: user });
+        const currUser = await Userdata.findOne({ email: data.user });
+
+        console.log(currUser);
 
         const question = await Question.findOne({ qno: data.qNo });
         const input_data = question.samplein;
