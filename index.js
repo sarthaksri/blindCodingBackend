@@ -192,7 +192,7 @@ async function submitCode(source_code, input_data, language_id, expected_output)
         "Content-Type": "application/json"
     };
 
-    const submission_url = "https://1615-112-196-126-3.ngrok-free.app/submissions";
+    const submission_url = "https://9c47-117-203-246-41.ngrok-free.app/submissions";
     const submission_payload = {
         source_code: source_code,
         stdin: input_data,
@@ -215,7 +215,7 @@ async function submitCode(source_code, input_data, language_id, expected_output)
             return { output: `Error: ${status_description}` };
         }
         console.log(`Checking Submission Status\nstatus: ${status_description}`);
-        const output_response = await axios.get(`https://1615-112-196-126-3.ngrok-free.app/submissions/${token}?base64_encoded=true`, { headers });
+        const output_response = await axios.get(`https://9c47-117-203-246-41.ngrok-free.app/submissions/${token}?base64_encoded=true`, { headers });
         output_data = output_response.data;
         status_description = output_data.status?.description;
     }
